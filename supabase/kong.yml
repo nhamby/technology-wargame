@@ -1,0 +1,68 @@
+_format_version: "2.1"
+_transform: true
+
+services:
+  - name: rest-v1
+    url: http://rest:3000
+    routes:
+      - name: rest-v1-all
+        paths:
+          - /rest/v1/
+        strip_path: true
+        methods:
+          - GET
+          - POST
+          - PATCH
+          - DELETE
+          - OPTIONS
+    plugins:
+      - name: cors
+        config:
+          origins:
+            - "*"
+          credentials: true
+          exposed_headers:
+            - Content-Range
+            - X-Supabase-Api-Version
+          headers:
+            - Accept
+            - Accept-Language
+            - Content-Language
+            - Content-Type
+            - Authorization
+            - X-Client-Info
+            - apikey
+            - X-Requested-With
+          max_age: 3600
+
+  - name: realtime-v1
+    url: http://realtime:4000/socket
+    routes:
+      - name: realtime-v1-all
+        paths:
+          - /realtime/v1/
+        strip_path: true
+    plugins:
+      - name: cors
+        config:
+          origins:
+            - "*"
+          credentials: true
+          headers:
+            - Accept
+            - Accept-Language
+            - Content-Language
+            - Content-Type
+            - Authorization
+            - X-Client-Info
+            - apikey
+            - X-Requested-With
+          max_age: 3600
+
+consumers:
+  - username: anon
+    keyauth_credentials:
+      - key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
+  - username: service_role
+    keyauth_credentials:
+      - key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU
