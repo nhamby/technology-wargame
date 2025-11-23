@@ -125,16 +125,24 @@
 
 	async function loadGameState() {
 		loading = true;
-		const { data, error } = await supabase
-			.from('game_state')
-			.select('data')
-			.single();
-		
-		if (error) {
-			console.error('Error loading game state:', error);
-			statusMessage = 'Error loading game state';
-		} else if (data) {
-			gameState = (data as any).data as GameState;
+		try {
+			const { data, error } = await supabase
+				.from('game_state')
+				.select('data')
+				.limit(1)
+				.maybeSingle();
+			
+			if (error) {
+				console.error('Error loading game state:', error);
+				statusMessage = 'Error loading game state: ' + error.message;
+			} else if (data) {
+				gameState = (data as any).data as GameState;
+			} else {
+				statusMessage = 'No game state found';
+			}
+		} catch (err) {
+			console.error('Exception loading game state:', err);
+			statusMessage = 'Error: ' + (err instanceof Error ? err.message : String(err));
 		}
 		loading = false;
 	}

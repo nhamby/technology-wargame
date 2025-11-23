@@ -48,22 +48,29 @@
 
 	async function loadGameState() {
 		loading = true;
-		const { data, error } = await supabase
-			.from('game_state')
-			.select('*')
-			.single();
-		
-		if (error) {
-			console.error('Error loading game state:', error);
-			statusMessage = 'Error loading game state: ' + error.message;
-			gameState = null;
-		} else if (data) {
-			console.log('Raw data from Supabase:', data);
-			gameState = (data as any).data as GameState;
-			console.log('Parsed gameState:', gameState);
-			statusMessage = 'Game state loaded';
-		} else {
-			statusMessage = 'No data found in database';
+		try {
+			const { data, error } = await supabase
+				.from('game_state')
+				.select('*')
+				.limit(1)
+				.maybeSingle();
+			
+			if (error) {
+				console.error('Error loading game state:', error);
+				statusMessage = 'Error loading game state: ' + error.message;
+				gameState = null;
+			} else if (data) {
+				console.log('Raw data from Supabase:', data);
+				gameState = (data as any).data as GameState;
+				console.log('Parsed gameState:', gameState);
+				statusMessage = 'Game state loaded';
+			} else {
+				statusMessage = 'No data found in database';
+				gameState = null;
+			}
+		} catch (err) {
+			console.error('Exception loading game state:', err);
+			statusMessage = 'Error: ' + (err instanceof Error ? err.message : String(err));
 			gameState = null;
 		}
 		loading = false;
@@ -73,42 +80,48 @@
 		loading = true;
 		statusMessage = 'Creating empty game state...';
 		
-		const emptyState: GameState = {
-			round: 1,
-			game_ready: false,
-			round_resolved: false,
-			teams: {} as Record<Team, TeamState>,
-			submissions: {} as Record<Team, TeamAllocation>,
-			global_BR_pool: { L: 0, M: 0, H: 0 },
-			public_log: [],
-			private_logs: {
-				US: [],
-				China: [],
-				France: [],
-				Russia: []
-			},
-			active_users: {
-				US: false,
-				China: false,
-				France: false,
-				Russia: false
-			},
-			history: []
-		};
+		try {
+			const emptyState: GameState = {
+				round: 1,
+				game_ready: false,
+				round_resolved: false,
+				teams: {} as Record<Team, TeamState>,
+				submissions: {} as Record<Team, TeamAllocation>,
+				global_BR_pool: { L: 0, M: 0, H: 0 },
+				public_log: [],
+				private_logs: {
+					US: [],
+					China: [],
+					France: [],
+					Russia: []
+				},
+				active_users: {
+					US: false,
+					China: false,
+					France: false,
+					Russia: false
+				},
+				history: []
+			};
 
-		const { data, error } = await supabase
-			.from('game_state')
-			.insert({ data: emptyState })
-			.select()
-			.single();
+			console.log('Attempting to insert game state...');
+			const { data, error } = await supabase
+				.from('game_state')
+				.insert({ data: emptyState })
+				.select()
+				.single();
 
-		if (error) {
-			console.error('Error creating game state:', error);
-			statusMessage = 'Error creating game state: ' + error.message;
-		} else {
-			console.log('Created game state:', data);
-			gameState = emptyState;
-			statusMessage = 'Empty game state created. Click "Initialize Game" to set up teams.';
+			if (error) {
+				console.error('Supabase error creating game state:', error);
+				statusMessage = `Error creating game state: ${error.message} (${error.code})`;
+			} else {
+				console.log('Created game state successfully:', data);
+				gameState = emptyState;
+				statusMessage = 'Empty game state created. Click "Initialize Game" to set up teams.';
+			}
+		} catch (err) {
+			console.error('Exception creating game state:', err);
+			statusMessage = 'Error: ' + (err instanceof Error ? err.message : String(err));
 		}
 		
 		loading = false;

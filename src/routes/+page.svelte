@@ -5,6 +5,10 @@
 	import { TEAM_PASSWORDS } from '$lib/config';
 	import { goto } from '$app/navigation';
 
+	// Prop provided by SvelteKit (intentionally unused)
+	export let data: any = undefined;
+	$: _ = data; // Suppress unused variable warning
+
 	let selectedRole: Role | '' = '';
 	let password = '';
 	let error = '';

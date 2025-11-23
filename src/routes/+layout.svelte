@@ -1,3 +1,9 @@
+<script lang="ts">
+	// Underscore prefix indicates intentionally unused prop provided by SvelteKit
+	export let data: any = undefined;
+	$: _ = data; // Suppress unused variable warning
+</script>
+
 <slot />
 
 <style>

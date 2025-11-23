@@ -9,13 +9,15 @@
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"init-db": "node scripts/init-db.js"
 	},
 	"dependencies": {
-		"@supabase/supabase-js": "^2.39.0"
+		"@supabase/supabase-js": "^2.39.0",
+		"dotenv": "^16.3.1"
 	},
 	"devDependencies": {
-		"@sveltejs/adapter-node": "^5.4.0",
+		"@sveltejs/adapter-auto": "^3.3.1",
 		"@sveltejs/kit": "^2.47.1",
 		"@sveltejs/vite-plugin-svelte": "^3.0.0",
 		"svelte": "^4.2.0",
