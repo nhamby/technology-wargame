@@ -24,7 +24,7 @@ export const supabase = createClient(supabaseUrl, supabaseKey, {
 });
 
 // Log connection info in development
-if (import.meta.env.DEV) {
+if (typeof window !== 'undefined') {
 	console.log('🔗 Supabase client initialized:', {
 		url: supabaseUrl,
 		hasKey: !!supabaseKey,
