@@ -57,29 +57,15 @@ Each round, teams simultaneously allocate their budget (W × 2 dice) across inve
    PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
    ```
 
-3. **Initialize Supabase database** - Go to your project's SQL Editor and run:
+3. **Initialize Supabase database**:
 
-   ```sql
-   CREATE TABLE game_state (
-     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-     data JSONB NOT NULL,
-     updated_at TIMESTAMPTZ DEFAULT NOW()
-   );
+   **Option A - Automated (Recommended)**:
 
-   INSERT INTO game_state (data) VALUES (
-     '{"round": 1, "game_ready": false, "teams": {}, "submissions": {},
-       "global_BR_pool": {"L": 0, "M": 0, "H": 0}, "public_log": [],
-       "private_logs": {}, "active_users": {"US": false, "China": false,
-       "France": false, "Russia": false}, "history": []}'
-   );
-
-   -- Enable real-time subscriptions
-   ALTER PUBLICATION supabase_realtime ADD TABLE game_state;
-
-   -- Enable row level security (required by Supabase)
-   ALTER TABLE game_state ENABLE ROW LEVEL SECURITY;
-   CREATE POLICY "Allow all operations" ON game_state FOR ALL USING (true);
+   ```bash
+   npm run init-db
    ```
+
+   **Option B - Manual**: Go to your project's SQL Editor and run `supabase/init.sql`
 
 4. **Start local development server**:
 
